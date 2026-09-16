@@ -33,7 +33,17 @@
       font-family: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       font-size: 14.4px;
       vertical-align: baseline;
-      
+    }
+
+    .head * {
+      font-size: 19.2px;
+    }
+
+    .headR {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+
     }
 
     .both {
@@ -43,7 +53,7 @@
     }
 
     .left {
-      background: rgb(42, 233, 223);
+      background: #f0f0f0;
       width: 289px;
       height: 100%;
     }
@@ -62,18 +72,17 @@
     .inner {
       display: flex;
       flex-direction: row;
-      background: greenyellow;
       height: 100%;
     }
 
     .r-left {
-      background-color: #19b426;
+      background-color: #0000;
       flex: 1;
       height: 100%;
     }
 
     .r-right {
-      background-color: #c95252;
+      background-color: #f0f0f0;
       width: 300px;
       height: 100%;
     }
@@ -192,10 +201,10 @@
         <a href="https://www.baidu.com/" style="text-decoration: none">
           <span class="" style="color: #dcdcdc;">regular</span>
           <span class="" style="color: #dcdcdc;">expressions</span>
-          <sub class="" style="color: #dcdcdc;">101</sub>
+          <sub class="" style="color: #dcdcdc;font-size: 12px;">101</sub>
         </a>
       </h1>
-      <div class="">
+      <div class="headR">
         <button class="">Upgrade to Pro</button>
         <button class="">Enterprise</button>
         <button class="">Sponsor</button>
@@ -207,11 +216,11 @@
       <div class="right">
         <div class="inner">
           <div class="r-left">
-            <div>REGULAR EXPRESSION</div>
+            <div>Regular Expression</div>
             <input class="border" type="text" id="reInput" value="(a(a)(..)a)">
-            <button class="border" onclick="run()">RUN</button>
+            <button class="border" onclick="run()">Run</button>
             <span id="sta"></span>
-            <div>FLAGS</div>
+            <div>Regex Flags</div>
             <label for=""><input type="checkbox" id="flag-g" checked>g</label>
             <label for=""><input type="checkbox" id="flag-m">m</label>
             <label for=""><input type="checkbox" id="flag-i">i</label>
@@ -220,10 +229,9 @@
             <label for=""><input type="checkbox" id="flag-s">s</label>
             <label for=""><input type="checkbox" id="flag-d" checked>d</label>
             <label for=""><input type="checkbox" id="flag-v">v</label>
-            <div>TEST STRING</div>
+            <div>Test String</div>
             <div id="output">
-              <div id="result" contenteditable>aaaaa 1 okech 2 apwaa aaaaa begin 4 afdgo 5 avoma 6 adsnn 7 anvka 8 avsma
-              </div>
+              <div id="result" contenteditable>aaaaa 1 okech 2 apwaa aaaaa begin 4 afdgo 5 avoma 6 adsnn 7 anvka 8 avsma</div>
               <div class="geoup-Hover-Tips"></div>
             </div>
           </div>
