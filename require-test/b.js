@@ -1,0 +1,1 @@
+let c = require('./c.js')
