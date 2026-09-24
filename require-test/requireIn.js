@@ -1,8 +1,11 @@
-function readFile(url) {
+//异步加载
+function readFile(url, callback) {
   let xhr = new XMLHttpRequest()
-  xhr.open('GET', url, false)
+  xhr.open('GET', url, true)
+  xhr.onload = function () {
+    callback(xhr.responseText)
+  }
   xhr.send()
-  return xhr.responseText
 }
 function require(fileName) {
   let code = readFile(fileName)
