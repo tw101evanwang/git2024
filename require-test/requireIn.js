@@ -17,7 +17,7 @@ function require(fileName) {
     exportss: {},
   }
   modfunc('exports, module', module)
-  modCache[fileName] = module
+  modCache[fileName] = module//关于循环依赖，可以把缓存模块的代码放到modfunc之前。
   return module.exportss
 }
 function use(fileName) {
