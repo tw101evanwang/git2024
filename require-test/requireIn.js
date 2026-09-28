@@ -28,7 +28,6 @@ function use(fileName) {
   }
 }
 function loadfileAndallDeps(fileName, callback) {
-//1.基于回调，2.promise,3.async
   readFile(fileName, (content) => {
     FileCache(fileName) = content
   })
@@ -37,15 +36,26 @@ function loadfileAndallDeps(fileName, callback) {
     if (getdeps.length === 0) {
       callback()
     } else {
-      let count = 0
-      getdeps.forEach((element) => {
-        count++
-        loadfileAndallDeps(element, () => {
-          if (count === getdeps.length) {
-            callback()
-          }
+      // //1.基于回调，2.promise,3.async
+      // let count = 0
+      // getdeps.forEach((element) => {
+      //   count++
+      //   loadfileAndallDeps(element, () => {
+      //     if (count === getdeps.length) {
+      //       callback()//全部加载完之后统一回调一次，而不是每次循环都回调一次
+      //     }
+      //   })
+      // });
+      let promises = getdeps.map((element) => {
+        return loadfileAndallDeps(element)
+      })
+      Promise.all(promises)
+        .then(() => {
+          callback()
         })
-      });
+        .catch(() => {
+          console.log(e)
+        })
     }
   }
 }
