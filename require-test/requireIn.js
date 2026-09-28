@@ -29,9 +29,9 @@ function use(fileName) {
 }
 function loadfileAndallDeps(fileName, callback) {
   readFile(fileName, (content) => {
-    FileCache(fileName) = content
+    FileCache[fileName] = content
+    let getdeps = getdep(content)
   })
-  let getdeps = getdep(content)
   function getdep(content) {
     if (getdeps.length === 0) {
       callback()
@@ -46,18 +46,29 @@ function loadfileAndallDeps(fileName, callback) {
       //     }
       //   })
       // });
-      let promises = getdeps.map((element) => {
-        return loadfileAndallDeps(element)
-      })
-      Promise.all(promises)
-        .then(() => {
-          callback()
+      //2.promise
+      // let promises = getdeps.map((element) => {
+      //   return loadfileAndallDeps(element)
+      // })
+      // Promise.all(promises)
+      //   .then(() => {
+      //     callback()
+      //   })
+      //   .catch(() => {
+      //     console.log(e)
+      //   })
+      async function loadfileAndallDeps(element) {
+        let promises = getdeps.map((element) => {
+          return loadfileAndallDeps(element)
         })
-        .catch(() => {
-          console.log(e)
-        })
+        await Promise.all(promises)
+        callback()
+      }
     }
   }
+}
+function loadfileAndallDeps1(fileName) {
+  return new Promise()
 }
 function getdep(content) {
   //正则匹配require
