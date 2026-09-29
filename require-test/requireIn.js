@@ -1,4 +1,4 @@
-//异步加载
+//异步读取文件
 function readFile(url, callback) {
   let xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
@@ -9,68 +9,55 @@ function readFile(url, callback) {
 }
 let FileCache = Object.create(null)
 let modCache = Object.create(null)
+//执行加载模块代码
 function require(fileName) {
+  if (fileName in modCache) {
+    return modCache[fileName].exports
+  }
   let code = FileCache[fileName]
-  let modfunc = new Function('exports, module', code)
+  let modfunc = new Function('exports', 'module', code)
   let module = {
     id: fileName,
-    exportss: {},
+    exports: {},
   }
-  modfunc('exports, module', module)
+  modfunc(module.exports, module)
   modCache[fileName] = module//关于循环依赖，可以把缓存模块的代码放到modfunc之前。
-  return module.exportss
+  return module.exports
 }
 function use(fileName) {
   if (fileName in FileCache) {
-    require(fileName)//require的时候，文件已经加载完毕
+    require(fileName)//require的时候，文件要已经加载完毕
   } else {
-    loadfileAndallDeps(fileName).then(() => { require(fileName) })
+    loadfileAndallDeps(fileName, () => { require(fileName) })
   }
 }
 function loadfileAndallDeps(fileName, callback) {
   readFile(fileName, (content) => {
     FileCache[fileName] = content
     let getdeps = getdep(content)
-  })
-  function getdep(content) {
     if (getdeps.length === 0) {
       callback()
     } else {
-      // //1.基于回调，2.promise,3.async
-      // let count = 0
-      // getdeps.forEach((element) => {
-      //   count++
-      //   loadfileAndallDeps(element, () => {
-      //     if (count === getdeps.length) {
-      //       callback()//全部加载完之后统一回调一次，而不是每次循环都回调一次
-      //     }
-      //   })
-      // });
-      //2.promise
-      // let promises = getdeps.map((element) => {
-      //   return loadfileAndallDeps(element)
-      // })
-      // Promise.all(promises)
-      //   .then(() => {
-      //     callback()
-      //   })
-      //   .catch(() => {
-      //     console.log(e)
-      //   })
-      async function loadfileAndallDeps(element) {
-        let promises = getdeps.map((element) => {
-          return loadfileAndallDeps(element)
+      let count = 0
+      getdeps.forEach((element) => {
+        loadfileAndallDeps(element, () => {
+          count++
+          if (count === getdeps.length) {
+            callback()
+          }
         })
-        await Promise.all(promises)
-        callback()
-      }
+
+      })
     }
-  }
-}
-function loadfileAndallDeps1(fileName) {
-  return new Promise()
+  })
 }
 function getdep(content) {
-  //正则匹配require
+  let reg = /require\(\s*(['"])(.+?)\1\s*\)/g
+  let deps = []
+  let match
+  while ((match = reg.exec(content)) !== null) {
+    deps.push(match[2])
+  }
+  return deps
 }
-use('a.js')
+use('./a.js')
