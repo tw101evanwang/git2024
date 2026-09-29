@@ -9,7 +9,7 @@ function readFile(url, callback) {
 }
 let FileCache = Object.create(null)
 let modCache = Object.create(null)
-//执行加载模块代码
+//执行加载的模块代码
 function require(fileName) {
   if (fileName in modCache) {
     return modCache[fileName].exports
@@ -46,7 +46,6 @@ function loadfileAndallDeps(fileName, callback) {
             callback()
           }
         })
-
       })
     }
   })
@@ -60,4 +59,34 @@ function getdep(content) {
   }
   return deps
 }
-use('./a.js')
+//use('./a.js')
+function readFilePromise(url) {
+  return new Promise((resolve, reject) => {
+    let xhr = new XMLHttpRequest()
+    xhr.open('GET', url, true)
+    xhr.onload = function () {
+      resolve(xhr.responseText)
+    }
+    xhr.send()
+  })
+}
+function loadfileAndallDepsPromise(fileName) {
+  return readFilePromise(fileName).then((content) => {
+    FileCache[fileName] = content
+    let getdeps = getdep(content)
+    let deps = getdeps.map((element) => {
+      return loadfileAndallDepsPromise(element)
+    })
+    return Promise.all(deps)
+  })
+}
+function usePromise(fileName) {
+  if (fileName in FileCache) {
+    require(fileName)//require的时候，文件要已经加载完毕
+  } else {
+    loadfileAndallDepsPromise(fileName).then(() => {
+      require(fileName)
+    })
+  }
+}
+//usePromise('./a.js')
